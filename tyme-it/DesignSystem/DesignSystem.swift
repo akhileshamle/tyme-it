@@ -8,7 +8,8 @@
 import SwiftUI
 
 public enum DSColor {
-    public static let background = Color.orange
+    public static let orange = Color.orange
+    public static let background = orange
     public static let charcoal = Color(.sRGB, red: 0.13, green: 0.13, blue: 0.13, opacity: 1.0)
     public static let surfaceTranslucent = Color.white.opacity(0.2)
     public static let surfaceStroke = Color.white.opacity(0.35)
@@ -50,3 +51,4 @@ public struct SecondaryStrokeButtonStyle: ButtonStyle {
             .opacity(configuration.isPressed ? 0.8 : 1.0)
     }
 }
+

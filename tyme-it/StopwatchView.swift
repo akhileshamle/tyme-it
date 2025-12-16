@@ -11,35 +11,54 @@ struct StopwatchView: View {
     @StateObject private var viewModel = StopwatchViewModel()
 
     var body: some View {
-        ZStack {
-            // Orange background replaced with DSColor.background
-            DSColor.background
-                .ignoresSafeArea()
+        GeometryReader { proxy in
+            let minSide = min(proxy.size.width, proxy.size.height)
+            let circleDiameter = max(minSide - CGFloat(DSSpacing.s16), 0)
 
-            VStack(spacing: 24) {
-                StopwatchTimeText(viewModel.formattedTime)
+            ZStack {
+                // Background: design system black
+                DSColor.charcoal
+                    .ignoresSafeArea()
 
-                HStack(spacing: 16) {
-                    Button(action: {
-                        performStrongHaptic()
-                        viewModel.toggle()
-                    }) {
-                        Image(systemName: viewModelIsRunning ? "pause.fill" : "play.fill")
+                // Background circle: design system orange, aspect-fit to screen with 8px padding
+                Circle()
+                    .fill(DSColor.orange)
+                    .frame(width: circleDiameter, height: circleDiameter)
+                    // .padding(CGFloat(DSSpacing.s24))
+
+                // Centered stopwatch time in the middle of the circle
+                VStack(spacing: 0) {
+                    StopwatchTimeText(viewModel.formattedTime)
+                }
+
+                // Buttons anchored to bottom-left with design system spacing
+                VStack {
+                    Spacer()
+                    HStack(spacing: CGFloat(DSSpacing.s16)) {
+                        Button(action: {
+                            performStrongHaptic()
+                            viewModel.toggle()
+                        }) {
+                            Image(systemName: viewModelIsRunning ? "pause.fill" : "play.fill")
+                        }
+                        .buttonStyle(PrimaryFilledButtonStyle())
+
+                        Button(action: {
+                            performStrongHaptic()
+                            viewModel.reset()
+                        }) {
+                            Image(systemName: "arrow.counterclockwise")
+                        }
+                        .buttonStyle(SecondaryStrokeButtonStyle())
+                        .disabled(viewModelIsRunning == false && viewModel.elapsed == 0)
+                        .opacity((viewModelIsRunning == false && viewModel.elapsed == 0) ? 0.5 : 1)
+
+                        Spacer()
                     }
-                    .buttonStyle(PrimaryFilledButtonStyle())
-
-                    Button(action: {
-                        performStrongHaptic()
-                        viewModel.reset()
-                    }) {
-                        Image(systemName: "arrow.counterclockwise")
-                    }
-                    .buttonStyle(SecondaryStrokeButtonStyle())
-                    .disabled(viewModelIsRunning == false && viewModel.elapsed == 0)
-                    .opacity((viewModelIsRunning == false && viewModel.elapsed == 0) ? 0.5 : 1)
+                    .padding(.leading, CGFloat(DSSpacing.s16))
+                    .padding(.bottom, CGFloat(DSSpacing.s16))
                 }
             }
-            .padding()
         }
     }
 
@@ -61,3 +80,4 @@ struct StopwatchView: View {
 #Preview {
     StopwatchView()
 }
+

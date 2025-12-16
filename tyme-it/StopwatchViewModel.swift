@@ -11,11 +11,11 @@ final class StopwatchViewModel: ObservableObject {
 
     // Expose a formatted string for the view
     var formattedTime: String {
-        let total = elapsed
-        let minutes = Int(total) / 60
-        let seconds = Int(total) % 60
-        let centiseconds = Int((total - floor(total)) * 100)
-        return String(format: "%02d:%02d.%02d", minutes, seconds, centiseconds)
+        let total = Int(elapsed)
+        let hours = total / 3600
+        let minutes = (total % 3600) / 60
+        let seconds = total % 60
+        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
     }
 
     func toggle() {
@@ -36,7 +36,7 @@ final class StopwatchViewModel: ObservableObject {
     private func start() {
         startDate = nil
         // Create a timer publisher ticking every 0.01s
-        timerCancellable = Timer.publish(every: 0.01, on: .main, in: .common)
+        timerCancellable = Timer.publish(every: 0.1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] now in
                 guard let self = self, self.isRunning else { return }
